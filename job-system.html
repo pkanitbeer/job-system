@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JOB System — Beer</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1117;--bg2:#161b26;--bg3:#1e2535;--card:#1a2030;
+  --border:#2a3348;--border2:#3a4560;
+  --text:#e8ecf4;--text2:#8a96b0;--text3:#5a6480;
+  --accent:#4f8ef7;--accent2:#3a7ae8;
+  --green:#2dd4a0;--amber:#f5a623;--red:#f05a5a;--purple:#a78bfa;--teal:#22d3ee;
+  --font:'IBM Plex Sans Thai',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;min-height:100vh}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;gap:8px}
+.nav-logo{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--accent);white-space:nowrap}
+.nav-logo span{color:var(--text2)}
+.nav-tabs{display:flex;gap:4px;flex:1;justify-content:center}
+.nav-tab{padding:6px 13px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);transition:all .15s;font-family:var(--font)}
+.nav-tab:hover{background:var(--bg3);color:var(--text)}
+.nav-tab.active{background:var(--accent);color:#fff}
+.role-switch{display:flex;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px;flex-shrink:0}
+.role-btn{padding:4px 11px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text3);transition:all .15s;font-family:var(--font)}
+.role-btn.active-admin{background:var(--accent);color:#fff}
+.role-btn.active-sales{background:var(--amber);color:#1a1000}
+.role-banner{display:none;align-items:center;gap:10px;padding:8px 16px;font-size:12px;font-weight:500;border-bottom:1px solid var(--border);background:rgba(245,166,35,.08);color:var(--amber)}
+
+main{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+.page{display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* DASH HEADER */
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+.dash-title{font-size:22px;font-weight:600;letter-spacing:-.3px}
+.dash-sub{font-size:13px;color:var(--text2);margin-top:4px}
+.dash-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--font);display:flex;align-items:center;gap:6px}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-export{background:transparent;color:var(--green);border:1px solid var(--green);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font);display:flex;align-items:center;gap:5px}
+.btn-export:hover{background:rgba(45,212,160,.1);transform:translateY(-1px)}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;cursor:default}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.blue::before{background:var(--accent)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.amber::before{background:var(--amber)}
+.stat-card.red::before{background:var(--red)}
+.stat-card.purple::before{background:var(--purple)}
+.stat-card.teal::before{background:var(--teal)}
+.stat-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.stat-val{font-size:22px;font-weight:600;font-family:var(--mono);line-height:1}
+.stat-val.green{color:var(--green)}.stat-val.amber{color:var(--amber)}.stat-val.red{color:var(--red)}.stat-val.blue{color:var(--accent)}.stat-val.teal{color:var(--teal)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px}
+
+/* SECTION TABS */
+.section-tabs{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:16px;width:fit-content}
+.section-tab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text3);transition:all .15s;font-family:var(--font)}
+.section-tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:768px){.charts-row{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.charts-row{grid-template-columns:1fr}}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.chart-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-label{font-size:12px;color:var(--text2);min-width:68px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.bar-val{font-size:11px;font-family:var(--mono);color:var(--text3);min-width:48px;text-align:right}
+
+/* FREIGHT REPORT */
+.freight-report{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.freight-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.freight-total-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.freight-total-item{background:var(--bg3);border-radius:8px;padding:10px 14px;flex:1;min-width:120px}
+.freight-total-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.freight-total-val{font-size:16px;font-weight:600;font-family:var(--mono);color:var(--teal)}
+.freight-rows{display:flex;flex-direction:column;gap:6px}
+.freight-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;font-size:12px}
+.freight-job{font-family:var(--mono);color:var(--accent);min-width:60px}
+.freight-customer{flex:1;color:var(--text2)}
+.freight-by{color:var(--text3);min-width:70px}
+.freight-amt{font-family:var(--mono);font-weight:600;color:var(--teal);min-width:70px;text-align:right}
+
+/* SUPPLIER TABLE */
+.sup-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+.sup-table{width:100%;border-collapse:collapse;font-size:12px}
+.sup-table thead th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;background:var(--bg2);border-bottom:1px solid var(--border);white-space:nowrap}
+.sup-table tbody tr{border-bottom:1px solid var(--border)}
+.sup-table tbody tr:last-child{border-bottom:none}
+.sup-table tbody td{padding:9px 12px;vertical-align:middle}
+
+/* MAIN TABLE */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.section-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .15s;font-family:var(--font)}
+.filter-btn:hover{border-color:var(--border2);color:var(--text)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;background:var(--bg2);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg3)}
+tbody td{padding:9px 12px;vertical-align:middle}
+.job-no{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--accent)}
+.product-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500;background:var(--bg3);color:var(--text2)}
+.money{font-family:var(--mono);font-size:12px;color:var(--text2)}
+.profit-pos{color:var(--green);font-family:var(--mono);font-size:12px}
+.profit-neg{color:var(--red);font-family:var(--mono);font-size:12px}
+.freight-cell{font-family:var(--mono);font-size:12px;color:var(--teal)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%}
+.badge.รอส่งสินค้า,.badge.รอส่ง-ลค{background:rgba(245,166,35,.12);color:var(--amber)}.badge.รอส่งสินค้า::before,.badge.รอส่ง-ลค::before{background:var(--amber)}
+.badge.เสร็จสิ้น,.badge.เสร็จสิ้น-ลค{background:rgba(45,212,160,.12);color:var(--green)}.badge.เสร็จสิ้น::before,.badge.เสร็จสิ้น-ลค::before{background:var(--green)}
+.badge.รอจ่าย{background:rgba(79,142,247,.12);color:var(--accent)}.badge.รอจ่าย::before{background:var(--accent)}
+.badge.จ่ายแล้ว{background:rgba(45,212,160,.12);color:var(--green)}.badge.จ่ายแล้ว::before{background:var(--green)}
+.badge.ค้างจ่าย{background:rgba(240,90,90,.12);color:var(--red)}.badge.ค้างจ่าย::before{background:var(--red)}
+.badge.เกินกำหนด-ลค{background:rgba(240,90,90,.15);color:var(--red)}.badge.เกินกำหนด-ลค::before{background:var(--red)}
+
+/* FORM */
+.form-header{margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.form-title{font-size:20px;font-weight:600;letter-spacing:-.2px}
+.job-number-preview{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:6px 14px;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.3);border-radius:8px;font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent)}
+.form-sections{display:flex;flex-direction:column;gap:20px}
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.form-section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-dot{width:6px;height:6px;border-radius:50%}
+.dot-blue{background:var(--accent)}.dot-green{background:var(--green)}.dot-amber{background:var(--amber)}.dot-purple{background:var(--purple)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:600px){.form-grid,.form-grid.cols3{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12px;font-weight:500;color:var(--text2)}
+.required{color:var(--red);margin-left:2px}
+input,select,textarea{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--font);transition:border .15s,box-shadow .15s;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,.15)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+select option{background:var(--bg2)}
+textarea{resize:vertical;min-height:60px}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.btn-success{background:var(--green);color:#0a2018;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font);display:flex;align-items:center;gap:6px}
+.btn-success:hover{filter:brightness(1.1);transform:translateY(-1px)}
+#profit-preview{margin-top:12px;padding:10px 14px;background:var(--bg3);border-radius:8px;font-size:13px;display:none}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:center;justify-content:center;padding:12px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;animation:slideUp .2s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1}
+.modal-job-no{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500}
+.modal-role-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:8px}
+.modal-role-tag.admin{background:rgba(79,142,247,.2);color:var(--accent)}
+.modal-role-tag.sales{background:rgba(245,166,35,.2);color:var(--amber)}
+.modal-close{background:var(--bg3);border:none;color:var(--text2);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px;flex:1}
+.edit-section{margin-bottom:20px}
+.edit-section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.edit-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:480px){.edit-grid,.edit-grid.cols3{grid-template-columns:1fr}}
+.edit-group{display:flex;flex-direction:column;gap:4px}
+.edit-group.full{grid-column:1/-1}
+.edit-label{font-size:11px;font-weight:500;color:var(--text3)}
+.edit-input{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;transition:border .15s;width:100%}
+.edit-input:focus{border-color:var(--accent);background:var(--bg2)}
+.edit-select{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;width:100%}
+.edit-select option{background:var(--bg2)}
+.status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 0}
+.status-row+.status-row{border-top:1px solid var(--border)}
+.status-label-sm{font-size:12px;color:var(--text2);font-weight:500;min-width:110px}
+.status-btn-group{display:flex;gap:6px;flex-wrap:wrap}
+.status-btn{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg2);color:var(--text2);transition:all .15s;font-family:var(--font)}
+.status-btn:hover{border-color:var(--border2);color:var(--text)}
+.status-btn.sel-green{background:rgba(45,212,160,.15);color:var(--green);border-color:var(--green)}
+.status-btn.sel-amber{background:rgba(245,166,35,.15);color:var(--amber);border-color:var(--amber)}
+.status-btn.sel-red{background:rgba(240,90,90,.15);color:var(--red);border-color:var(--red)}
+.status-btn.sel-blue{background:rgba(79,142,247,.15);color:var(--accent);border-color:var(--accent)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.detail-item{background:var(--bg3);border-radius:8px;padding:10px 12px}
+.detail-key{font-size:11px;color:var(--text3);margin-bottom:3px}
+.detail-val{font-size:13px;font-weight:500;color:var(--text)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.modal-save-bar{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg2)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px}
+.filter-bar-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.filter-select{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;cursor:pointer;min-width:100px}
+.filter-select:focus{border-color:var(--accent)}
+.filter-active-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.filter-reset{background:transparent;border:1px solid var(--border);color:var(--text3);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:var(--font);transition:all .12s}
+.filter-reset:hover{border-color:var(--border2);color:var(--text)}
+.filter-result-count{font-size:12px;color:var(--text3);margin-left:auto}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#0a2018;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:300;transform:translateY(20px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:500px){.nav-logo span{display:none}.nav-tab{padding:6px 9px;font-size:12px}.role-btn{padding:4px 8px}}
+</style>
+</head>
+<body>
+<!-- LOADING BAR -->
+<div id="loading-bar" style="position:fixed;top:0;left:0;height:3px;width:0;background:var(--green);z-index:999;transition:width .4s ease;border-radius:0 2px 2px 0"></div>
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:rgba(15,17,23,.6);backdrop-filter:blur(2px)">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 32px;text-align:center">
+    <div style="width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px"></div>
+    <div style="font-size:13px;color:var(--text2)" id="loading-msg">กำลังโหลดข้อมูลจาก Sheets...</div>
+  </div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<nav>
+  <div class="nav-logo">JOB<span>/ระบบ</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard')">ภาพรวม</button>
+    <button class="nav-tab" onclick="showPage('openjob')">เปิดงาน</button>
+  </div>
+  <div class="role-switch">
+    <button class="role-btn active-admin" id="rbtn-admin" onclick="setRole('admin')">ผู้ดูแล</button>
+    <button class="role-btn" id="rbtn-sales" onclick="setRole('sales')">พนักงานขาย</button>
+  </div>
+</nav>
+<div class="role-banner" id="role-banner">
+  👤 มุมมองพนักงานขาย — ข้อมูลต้นทุน/กำไรถูกซ่อน และไม่สามารถแก้ไขได้
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+<main>
+  <div class="dash-header">
+    <div>
+      <div class="dash-title" id="dash-title">ภาพรวมงาน 2026</div>
+      <div class="dash-sub" id="dash-sub">ข้อมูลภายใน — อัปเดตล่าสุด มิถุนายน 2026</div>
+    </div>
+    <div class="dash-actions">
+      <button class="btn-export" id="btn-export" onclick="exportReport()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3 6l3.5 3.5L10 6M1 11h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ดาวน์โหลดรายงาน
+      </button>
+      <button class="btn-export" onclick="loadJobs()" style="color:var(--accent);border-color:var(--accent)" title="โหลดข้อมูลใหม่จาก Sheets">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5a4.5 4.5 0 1 1 1 2.8M2 10V7h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        รีเฟรช
+      </button>
+      <button class="btn-primary" onclick="showPage('openjob')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        เปิดงานใหม่
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" id="filter-bar">
+    <span class="filter-bar-label">กรอง</span>
+    <select class="filter-select" id="fil-sales" onchange="applyFilters()">
+      <option value="">พนักงานทั้งหมด</option>
+      <option>พี่เบียร์</option>
+      <option>พี่เจน</option>
+      <option>พี่พลอย</option>
+      <option>พี่หนึ่ง</option>
+      <option>เบลล์</option>
+    </select>
+    <select class="filter-select" id="fil-month" onchange="applyFilters()">
+      <option value="">ทุกเดือน</option>
+      <option value="1">มกราคม</option><option value="2">กุมภาพันธ์</option>
+      <option value="3">มีนาคม</option><option value="4">เมษายน</option>
+      <option value="5">พฤษภาคม</option><option value="6">มิถุนายน</option>
+      <option value="7">กรกฎาคม</option><option value="8">สิงหาคม</option>
+      <option value="9">กันยายน</option><option value="10">ตุลาคม</option>
+      <option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option>
+    </select>
+    <select class="filter-select" id="fil-year" onchange="applyFilters()">
+      <option value="">ทุกปี</option>
+      <option value="2025">2025</option>
+      <option value="2026" selected>2026</option>
+      <option value="2027">2027</option>
+    </select>
+    <select class="filter-select" id="fil-company" onchange="applyFilters()">
+      <option value="">ทุกบริษัท</option>
+      <option>ENERJPLUS</option>
+      <option>NEORAJ</option>
+    </select>
+    <span class="filter-result-count" id="fil-count"></span>
+    <button class="filter-reset" onclick="resetFilters()">✕ ล้าง</button>
+  </div>
+
+  <!-- STATS ADMIN -->
+  <div class="stats-grid" id="stats-admin">
+    <div class="stat-card blue"><div class="stat-label">JOB ทั้งหมด</div><div class="stat-val blue" id="a-total">7</div><div class="stat-sub">เม.ย.–มิ.ย. 2026</div></div>
+    <div class="stat-card green"><div class="stat-label">ยอดขายรวม (฿)</div><div class="stat-val" id="a-sale">553,309</div><div class="stat-sub" style="color:var(--text3)">บาท</div></div>
+    <div class="stat-card amber"><div class="stat-label">กำไรรวม (฿)</div><div class="stat-val amber" id="a-profit">49,459</div><div class="stat-sub amber" id="a-margin" style="color:var(--amber)">margin 8.94%</div></div>
+    <div class="stat-card teal"><div class="stat-label">ยอดซื้อรวม (฿)</div><div class="stat-val teal" id="a-cost">503,849</div><div class="stat-sub" style="color:var(--text3)">บาท</div></div>
+    <div class="stat-card purple"><div class="stat-label">ค่าขนส่งรวม (฿)</div><div class="stat-val" style="color:var(--purple)" id="a-freight">1,783</div><div class="stat-sub" style="color:var(--text3)">ทุก JOB</div></div>
+    <div class="stat-card red"><div class="stat-label">เกินกำหนดชำระ</div><div class="stat-val red" id="a-overdue">3</div><div class="stat-sub">JOB ต้องติดตาม</div></div>
+  </div>
+  <!-- STATS SALES -->
+  <div class="stats-grid" id="stats-sales" style="display:none">
+    <div class="stat-card blue"><div class="stat-label">JOB ทั้งหมด</div><div class="stat-val blue" id="s-total">7</div><div class="stat-sub">งานทั้งหมด</div></div>
+    <div class="stat-card green"><div class="stat-label">ยอดขาย (฿)</div><div class="stat-val" id="s-sale">553,309</div><div class="stat-sub" style="color:var(--text3)">บาท</div></div>
+    <div class="stat-card amber"><div class="stat-label">รอส่งสินค้า</div><div class="stat-val amber" id="s-deliver">3</div><div class="stat-sub">JOB ค้างส่ง</div></div>
+    <div class="stat-card red"><div class="stat-label">เกินกำหนดชำระ</div><div class="stat-val red" id="s-overdue">3</div><div class="stat-sub">JOB ค้างรับเงิน</div></div>
+  </div>
+
+  <!-- SECTION TABS (admin) -->
+  <div id="admin-section-tabs" class="section-tabs">
+    <button class="section-tab active" onclick="showDashSection('jobs',this)">รายการ JOB</button>
+    <button class="section-tab" onclick="showDashSection('freight',this)">ค่าขนส่ง</button>
+    <button class="section-tab" onclick="showDashSection('supplier',this)">Supplier</button>
+  </div>
+
+  <!-- CHARTS (admin, shown in jobs section) -->
+  <div id="section-charts" class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">ยอดขาย แยกพนักงาน</div>
+      <div class="bar-row"><div class="bar-label">พี่เบียร์</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)"></div></div><div class="bar-val">330,688</div></div>
+      <div class="bar-row"><div class="bar-label">พี่เจน</div><div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--purple)"></div></div><div class="bar-val">196,221</div></div>
+      <div class="bar-row"><div class="bar-label">พี่พลอย</div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--green)"></div></div><div class="bar-val">26,400</div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">ยอดขาย แยกบริษัท</div>
+      <div class="bar-row"><div class="bar-label">ENERJPLUS</div><div class="bar-track"><div class="bar-fill" style="width:42%;background:var(--amber)"></div></div><div class="bar-val">234,009</div></div>
+      <div class="bar-row"><div class="bar-label">NEORAJ</div><div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--green)"></div></div><div class="bar-val">319,300</div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">สถานะการจ่าย</div>
+      <div class="bar-row"><div class="bar-label">จ่ายแล้ว</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--green)"></div></div><div class="bar-val">2 JOB</div></div>
+      <div class="bar-row"><div class="bar-label">รอจ่าย</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--accent)"></div></div><div class="bar-val">3 JOB</div></div>
+      <div class="bar-row"><div class="bar-label">ค้างจ่าย</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--red)"></div></div><div class="bar-val">2 JOB</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION: JOB TABLE -->
+  <div id="section-jobs">
+    <div class="section-head">
+      <div class="section-title" id="table-title">รายการ JOB</div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterTable('all',this)">ทั้งหมด</button>
+        <button class="filter-btn" onclick="filterTable('รอส่งสินค้า',this)">รอส่ง</button>
+        <button class="filter-btn" onclick="filterTable('เกินกำหนด',this)">เกินกำหนด</button>
+        <button class="filter-btn" onclick="filterTable('เสร็จสิ้น',this)">เสร็จสิ้น</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table><thead id="table-head"></thead><tbody id="job-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- SECTION: FREIGHT -->
+  <div id="section-freight" style="display:none">
+    <div class="freight-report">
+      <div class="freight-title">
+        <span>รายงานค่าขนส่ง</span>
+        <button class="btn-export" onclick="exportFreight()" style="padding:4px 10px;font-size:11px">⬇ Export</button>
+      </div>
+      <div class="freight-total-row">
+        <div class="freight-total-item"><div class="freight-total-label">ค่าขนส่งรวม</div><div class="freight-total-val" id="ft-total">0 ฿</div></div>
+        <div class="freight-total-item"><div class="freight-total-label">รถบริษัท</div><div class="freight-total-val" id="ft-company">0 ฿</div></div>
+        <div class="freight-total-item"><div class="freight-total-label">Supplier ส่ง</div><div class="freight-total-val" id="ft-sup">0 ฿</div></div>
+        <div class="freight-total-item"><div class="freight-total-label">JOB มีค่าขนส่ง</div><div class="freight-total-val" id="ft-count">0 JOB</div></div>
+      </div>
+      <div class="freight-rows" id="freight-rows"></div>
+    </div>
+  </div>
+
+  <!-- SECTION: SUPPLIER -->
+  <div id="section-supplier" style="display:none">
+    <div class="section-head">
+      <div class="section-title">รายการ Supplier</div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterSup('all',this)">ทั้งหมด</button>
+        <button class="filter-btn" onclick="filterSup('รอจ่าย',this)">รอจ่าย</button>
+        <button class="filter-btn" onclick="filterSup('ค้างจ่าย',this)">ค้างจ่าย</button>
+        <button class="filter-btn" onclick="filterSup('จ่ายแล้ว',this)">จ่ายแล้ว</button>
+      </div>
+    </div>
+    <div class="sup-table-wrap">
+      <table class="sup-table">
+        <thead><tr>
+          <th>JOB No.</th><th>ลูกค้า</th><th>Supplier</th><th>PO No.</th>
+          <th>มูลค่าซื้อ (฿)</th><th>มูลค่าขาย (฿)</th><th>กำไร (฿)</th>
+          <th>กำหนดจ่าย</th><th>สถานะ Supplier</th><th>สถานะ (ลค.)</th>
+        </tr></thead>
+        <tbody id="sup-tbody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;display:flex;gap:20px;flex-wrap:wrap">
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">ยอดซื้อรวม</div><div style="font-family:var(--mono);font-weight:600;color:var(--teal)" id="sup-total-cost">—</div></div>
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">ยังไม่จ่าย Supplier</div><div style="font-family:var(--mono);font-weight:600;color:var(--red)" id="sup-unpaid">—</div></div>
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">จ่ายแล้ว</div><div style="font-family:var(--mono);font-weight:600;color:var(--green)" id="sup-paid">—</div></div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- OPEN JOB -->
+<div id="page-openjob" class="page">
+<main>
+  <div class="form-header">
+    <div class="form-title" id="openjob-title">OPEN JOB</div>
+    <div class="job-number-preview">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M6 4v3l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="preview-job-no">J26060008</span>
+    </div>
+  </div>
+  <div class="form-sections">
+    <div class="form-section">
+      <div class="form-section-title"><span class="section-dot dot-blue"></span>ข้อมูลหลัก</div>
+      <div class="form-grid">
+        <div class="form-group"><label>ชื่อลูกค้า <span class="required">*</span></label><input type="text" id="f-customer" placeholder="เช่น บ.อินโดไชนา เอ็นจิเนียริ่ง"></div>
+        <div class="form-group"><label>กลุ่มลูกค้า</label><select id="f-group"><option>เอกชน</option><option>รัฐบาล</option><option>SOE</option></select></div>
+        <div class="form-group"><label>สินค้า / บริการ <span class="required">*</span></label><select id="f-product"><option value="">— เลือก —</option><option>อุปกรณ์ไฟฟ้าแรงต่ำ</option><option>อุปกรณ์ไฟฟ้าแรงสูง</option><option>Cable Tray</option><option>Perforated Tray</option><option>Pull Box</option><option>Maintenance</option><option>อื่นๆ</option></select></div>
+        <div class="form-group"><label>บริษัทที่ขาย <span class="required">*</span></label><select id="f-company"><option>ENERJPLUS</option><option>NEORAJ</option></select></div>
+        <div class="form-group"><label>พนักงานขาย</label><select id="f-sales"><option>พี่เบียร์</option><option>พี่เจน</option><option>พี่พลอย</option><option>พี่หนึ่ง</option><option>เบลล์</option></select></div>
+        <div class="form-group"><label>เงื่อนไขชำระ</label><select id="f-payment"><option>เครดิต 30 วัน</option><option>เครดิต 60 วัน</option><option>เงินสด</option></select></div>
+        <div class="form-group full"><label>หมายเหตุ</label><textarea id="f-note" placeholder="รายละเอียดเพิ่มเติม..."></textarea></div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title"><span class="section-dot dot-green"></span>เอกสารขาย (SALES)</div>
+      <div class="form-grid cols3">
+        <div class="form-group"><label>เลขที่ Quotation</label><input type="text" id="f-qt" placeholder="QTN2026060..."></div>
+        <div class="form-group"><label>เลขที่ Invoice</label><input type="text" id="f-inv" placeholder="INV2026060..."></div>
+        <div class="form-group"><label>โครงการ</label><input type="text" id="f-project" placeholder="PROJECT ..."></div>
+        <div class="form-group"><label>มูลค่าขาย (฿) <span class="required">*</span></label><input type="number" id="f-sale" placeholder="0.00" oninput="calcProfit()"></div>
+        <div class="form-group"><label>กำหนดชำระ</label><input type="date" id="f-due"></div>
+      </div>
+    </div>
+    <div class="form-section" id="form-section-supplier">
+      <div class="form-section-title"><span class="section-dot dot-amber"></span>ต้นทุน / Supplier</div>
+      <div class="form-grid cols3">
+        <div class="form-group"><label>Supplier</label><select id="f-sup"><option value="">— เลือก —</option><option>บ.อินโดไชนา เอ็นจิเนียริ่ง ฯ</option><option>บ.ซีจี อิเล็คทริคซีสเทม จก.</option><option>บ.เอไอซี แอดวานซ์ จก.</option><option>บ.พิชญอาภา เสมา จก.</option><option>อื่นๆ</option></select></div>
+        <div class="form-group"><label>เลขที่ PO Supplier</label><input type="text" id="f-po" placeholder="PON2026060..."></div>
+        <div class="form-group"><label>มูลค่าซื้อ (฿)</label><input type="number" id="f-cost" placeholder="0.00" oninput="calcProfit()"></div>
+        <div class="form-group"><label>กำหนดจ่าย Supplier</label><input type="date" id="f-supdue"></div>
+      </div>
+      <div id="profit-preview"><span style="color:var(--text2)">กำไรโดยประมาณ: </span><span id="profit-val" style="font-family:var(--mono);font-weight:600"></span><span id="margin-val" style="font-size:11px;color:var(--text3);margin-left:8px"></span></div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title"><span class="section-dot dot-purple"></span>การจัดส่ง (LOGISTIC)</div>
+      <div class="form-grid cols3">
+        <div class="form-group"><label>กำหนดส่ง</label><input type="date" id="f-deliverby"></div>
+        <div class="form-group"><label>ขนส่งโดย</label><select id="f-transport"><option>รถบริษัท</option><option>Supplier</option><option>ขนส่งเอกชน</option></select></div>
+        <div class="form-group"><label>ค่าขนส่ง (฿)</label><input type="number" id="f-freight" placeholder="0"></div>
+        <div class="form-group"><label>สถานที่รับ</label><input type="text" id="f-pickfrom" placeholder="INDO, NEORAJ"></div>
+        <div class="form-group"><label>สถานที่ส่ง</label><input type="text" id="f-deliverto" placeholder="ปลวกแดง ระยอง"></div>
+        <div class="form-group"><label>ผู้รับของ</label><input type="text" id="f-receiver" placeholder="คุณ..."></div>
+        <div class="form-group"><label>เบอร์โทร</label><input type="tel" id="f-phone" placeholder="0xx-xxx-xxxx"></div>
+      </div>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn-ghost" onclick="resetForm()">ล้างข้อมูล</button>
+    <button class="btn-success" onclick="submitJob()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      บันทึก JOB
+    </button>
+  </div>
+</main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="modal-job-no" id="modal-job-no"></span>
+          <span class="modal-role-tag" id="modal-role-tag">ADMIN</span>
+        </div>
+        <div style="font-size:15px;font-weight:600;margin-top:2px" id="modal-customer"></div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-save-bar" id="modal-save-bar">
+      <button class="btn-ghost" id="btn-delete" onclick="deleteJobConfirm()" style="border-color:var(--red);color:var(--red);margin-right:auto">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="vertical-align:-1px"><path d="M2 3.5h10M5 3.5V2h4v1.5M3 3.5l.5 9h7l.5-9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ลบ JOB
+      </button>
+      <button class="btn-ghost" onclick="closeModalDirect()">ปิด</button>
+      <button class="btn-success" id="btn-save" onclick="saveAll()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        บันทึกทั้งหมด
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="toast-msg"></span></div>
+
+<script>
+// ── DATA ──
+const jobs = [
+  {no:'JOB001',customer:'ลูกค้า 1-11',group:'เอกชน',product:'อุปกรณ์ไฟฟ้าแรงต่ำ',company:'ENERJPLUS',sales:'พี่เบียร์',payment:'เครดิต 60 วัน',note:'',qt:'QTN2026040010',inv:'INV2026040011',project:'PROJECT 1',saleAmt:11388,due:'2026-06-09',cost:20000,supplier:'บ.ซีจี อิเล็คทริคซีสเทม จก.',po:'PON2026040008',supDue:'2026-05-15',deliverBy:'2026-04-09',transport:'รถบริษัท',freight:880,pickfrom:'INDO',deliverto:'ปลวงแดง ระยอง',receiver:'คุณโอต',phone:'086-330-9751',deliverDate:'',deliverStatus:'รอส่งสินค้า',payStatus:'รอจ่าย',payDue:'เกินกำหนด',supPayStatus:'จ่ายแล้ว'},
+  {no:'JOB002',customer:'ลูกค้า 2',group:'เอกชน',product:'Pull Box',company:'ENERJPLUS',sales:'พี่เจน',payment:'เครดิต 60 วัน',note:'',qt:'QTJ2026040082',inv:'INV2026040012',project:'PROJECT 2',saleAmt:47000,due:'2026-07-07',cost:35299.3,supplier:'บ.อินโดไชนา เอ็นจิเนียริ่ง ฯ',po:'PON2026040051',supDue:'2026-06-07',deliverBy:'2026-05-14',transport:'รถบริษัท',freight:768,pickfrom:'NEORAJ',deliverto:'ซอยรามอินทรา 69',receiver:'คุณสมหมาย',phone:'092-638-2377',deliverDate:'2026-05-07',deliverStatus:'เสร็จสิ้น',payStatus:'จ่ายแล้ว',payDue:'เกินกำหนด',supPayStatus:'รอจ่าย'},
+  {no:'JOB003',customer:'ลูกค้า 3',group:'เอกชน',product:'Maintenance',company:'NEORAJ',sales:'พี่เบียร์',payment:'เงินสด',note:'',qt:'QTN2026040018',inv:'INV2026040013',project:'PROJECT 3',saleAmt:100000,due:'2026-05-09',cost:100000,supplier:'บ.พิชญอาภา เสมา จก.',po:'PON2026050013',supDue:'2026-05-30',deliverBy:'2026-05-09',transport:'Supplier',freight:0,pickfrom:'INDO',deliverto:'—',receiver:'—',phone:'—',deliverDate:'2026-05-09',deliverStatus:'เสร็จสิ้น',payStatus:'ค้างจ่าย',payDue:'เกินกำหนด',supPayStatus:'ค้างจ่าย'},
+  {no:'JOB004',customer:'ลูกค้า 4',group:'เอกชน',product:'Cable Tray',company:'ENERJPLUS',sales:'พี่เจน',payment:'เครดิต 30 วัน',note:'',qt:'QTJ2026050072',inv:'INV2026040014',project:'PROJECT 4',saleAmt:149220.5,due:'2026-06-22',cost:120426.09,supplier:'บ.อินโดไชนา เอ็นจิเนียริ่ง ฯ',po:'PON2026050026',supDue:'2026-06-22',deliverBy:'2026-05-23',transport:'Supplier',freight:0,pickfrom:'INDO',deliverto:'HCE ปลวกแดง ระยอง',receiver:'คุณวิว',phone:'098-389-9626',deliverDate:'',deliverStatus:'รอส่งสินค้า',payStatus:'รอจ่าย',payDue:'ยังไม่ถึงกำหนด',supPayStatus:'รอจ่าย'},
+  {no:'JOB005',customer:'ลูกค้า 5',group:'เอกชน',product:'อุปกรณ์ไฟฟ้าแรงสูง',company:'NEORAJ',sales:'พี่เบียร์',payment:'เงินสด',note:'',qt:'QTJ2026050073',inv:'INV2026040015',project:'PROJECT 5',saleAmt:219300,due:'2026-05-21',cost:218280,supplier:'บ.เอไอซี แอดวานซ์ จก.',po:'PON2026050042',supDue:'2026-06-21',deliverBy:'2026-05-21',transport:'Supplier',freight:0,pickfrom:'INDO',deliverto:'—',receiver:'—',phone:'—',deliverDate:'2026-05-21',deliverStatus:'เสร็จสิ้น',payStatus:'จ่ายแล้ว',payDue:'ใกล้ครบกำหนด',supPayStatus:'ค้างจ่าย'},
+  {no:'JOB006',customer:'ลูกค้า 6',group:'เอกชน',product:'Perforated Tray',company:'ENERJPLUS',sales:'พี่พลอย',payment:'เครดิต 30 วัน',note:'',qt:'QTJ2026050104',inv:'INV2026040016',project:'PROJECT 6',saleAmt:13200,due:'2026-06-26',cost:9844,supplier:'บ.อินโดไชนา เอ็นจิเนียริ่ง ฯ',po:'PON2026050045',supDue:'2026-06-26',deliverBy:'2026-05-27',transport:'รถบริษัท',freight:135,pickfrom:'INDO',deliverto:'ธนบุรี กรุงเทพ',receiver:'คุณวิโรจน์',phone:'090-993-2478',deliverDate:'',deliverStatus:'รอส่งสินค้า',payStatus:'ค้างจ่าย',payDue:'ใกล้ครบกำหนด',supPayStatus:'ค้างจ่าย'},
+  {no:'JOB007',customer:'ลูกค้า 7',group:'เอกชน',product:'Perforated Tray',company:'ENERJPLUS',sales:'พี่พลอย',payment:'เครดิต 30 วัน',note:'',qt:'QTJ2026050105',inv:'INV2026040017',project:'PROJECT 7',saleAmt:13200,due:'',cost:0,supplier:'',po:'',supDue:'',deliverBy:'',transport:'—',freight:0,pickfrom:'',deliverto:'—',receiver:'—',phone:'—',deliverDate:'',deliverStatus:'รอส่งสินค้า',payStatus:'รอจ่าย',payDue:'—',supPayStatus:'รอจ่าย'},
+];
+
+let currentRole='admin', currentFilter='all', currentSupFilter='all', jobCounter=8, activeJobNo=null;
+let _ds=null,_ps=null,_ss=null;
+
+// ── HELPERS ──
+function fmt(n){return Math.round(n).toLocaleString('th-TH')}
+function fmtD(d){if(!d)return '—';const p=d.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d}
+function profit(j){return j.saleAmt-j.cost}
+
+// ── CUSTOMER STATUS (ลค.) ──
+function custStatus(j){
+  if(j.deliverStatus==='เสร็จสิ้น' && j.payDue==='เกินกำหนด') return 'เกินกำหนด-ลค';
+  if(j.deliverStatus==='เสร็จสิ้น') return 'เสร็จสิ้น-ลค';
+  return 'รอส่ง-ลค';
+}
+function custStatusLabel(j){
+  const s=custStatus(j);
+  if(s==='เกินกำหนด-ลค') return 'เกินกำหนดจ่าย';
+  if(s==='เสร็จสิ้น-ลค') return 'เสร็จสิ้น';
+  return 'รอส่ง';
+}
+
+// ── ROLE ──
+function setRole(r){
+  currentRole=r;
+  const isA=r==='admin';
+  document.getElementById('rbtn-admin').className='role-btn'+(isA?' active-admin':'');
+  document.getElementById('rbtn-sales').className='role-btn'+(!isA?' active-sales':'');
+  document.getElementById('role-banner').style.display=isA?'none':'flex';
+  document.getElementById('stats-admin').style.display=isA?'grid':'none';
+  document.getElementById('stats-sales').style.display=!isA?'grid':'none';
+  document.getElementById('admin-section-tabs').style.display=isA?'flex':'none';
+  document.getElementById('btn-export').style.display=isA?'flex':'none';
+  document.getElementById('filter-bar').style.display='flex';
+  document.getElementById('dash-sub').textContent=isA?'ข้อมูลภายใน — อัปเดตล่าสุด มิถุนายน 2026':'มุมมองพนักงานขาย';
+  if(!isA){showDashSection('jobs',null)}
+  // OPEN JOB supplier section
+  const supSec=document.getElementById('form-section-supplier');
+  if(supSec)supSec.style.display=isA?'block':'none';
+  const ojT=document.getElementById('openjob-title');
+  if(ojT)ojT.textContent=isA?'OPEN JOB':'OPEN JOB — ข้อมูลฝั่งลูกค้า';
+  renderTableHead(); applyFilters();
+}
+
+// ── FILTER STATE ──
+let activeFilters = {sales:'', month:'', year:'2026', company:''};
+
+function applyFilters(){
+  activeFilters.sales  = document.getElementById('fil-sales')?.value  || '';
+  activeFilters.month  = document.getElementById('fil-month')?.value  || '';
+  activeFilters.year   = document.getElementById('fil-year')?.value   || '';
+  activeFilters.company= document.getElementById('fil-company')?.value|| '';
+  const data = getBaseFiltered();
+  updateStats(data);
+  renderTable(getFiltered());
+  renderCharts(data);
+  document.getElementById('fil-count').textContent = data.length + ' JOB';
+}
+
+function resetFilters(){
+  ['fil-sales','fil-month','fil-year','fil-company'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value = id==='fil-year'?'2026':'';
+  });
+  activeFilters={sales:'',month:'',year:'2026',company:''};
+  applyFilters();
+}
+
+function getBaseFiltered(){
+  return jobs.filter(j=>{
+    if(activeFilters.sales   && j.sales!==activeFilters.sales)    return false;
+    if(activeFilters.company && j.company!==activeFilters.company) return false;
+    if(activeFilters.year || activeFilters.month){
+      // use deliverBy date or due date to determine month/year
+      const dateStr = j.due || j.deliverBy || '';
+      if(!dateStr) return !activeFilters.year && !activeFilters.month;
+      const d = new Date(dateStr);
+      if(isNaN(d)) return false;
+      if(activeFilters.year  && String(d.getFullYear())!==activeFilters.year)  return false;
+      if(activeFilters.month && String(d.getMonth()+1)!==activeFilters.month)  return false;
+    }
+    return true;
+  });
+}
+
+// ── STATS ──
+function updateStats(data){
+  data = data || getBaseFiltered();
+  const totalSale   = data.reduce((a,j)=>a+j.saleAmt,0);
+  const totalCost   = data.reduce((a,j)=>a+j.cost,0);
+  const totalProfit = totalSale-totalCost;
+  const totalFreight= data.reduce((a,j)=>a+j.freight,0);
+  const overdue     = data.filter(j=>j.payDue==='เกินกำหนด').length;
+  const pending     = data.filter(j=>j.deliverStatus==='รอส่งสินค้า').length;
+  const margin      = totalSale>0?((totalProfit/totalSale)*100).toFixed(1):'0';
+  document.getElementById('a-total').textContent  = data.length;
+  document.getElementById('a-sale').textContent   = fmt(totalSale);
+  document.getElementById('a-profit').textContent = fmt(totalProfit);
+  document.getElementById('a-margin').textContent = 'margin '+margin+'%';
+  document.getElementById('a-cost').textContent   = fmt(totalCost);
+  document.getElementById('a-freight').textContent= fmt(totalFreight);
+  document.getElementById('a-overdue').textContent= overdue;
+  document.getElementById('s-total').textContent  = data.length;
+  document.getElementById('s-sale').textContent   = fmt(totalSale);
+  document.getElementById('s-deliver').textContent= pending;
+  document.getElementById('s-overdue').textContent= overdue;
+}
+
+// ── DASH SECTIONS ──
+function showDashSection(sec, btn){
+  ['section-jobs','section-freight','section-supplier','section-charts'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display='none';
+  });
+  document.querySelectorAll('.section-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(sec==='jobs'){
+    document.getElementById('section-jobs').style.display='block';
+    document.getElementById('section-charts').style.display='grid';
+  } else if(sec==='freight'){
+    document.getElementById('section-freight').style.display='block';
+    renderFreight();
+  } else if(sec==='supplier'){
+    document.getElementById('section-supplier').style.display='block';
+    renderSupplier();
+  }
+}
+
+// ── FREIGHT REPORT ──
+function renderFreight(){
+  const withFreight=jobs.filter(j=>j.freight>0);
+  const total=jobs.reduce((a,j)=>a+j.freight,0);
+  const byCompany=jobs.filter(j=>j.transport==='รถบริษัท').reduce((a,j)=>a+j.freight,0);
+  const bySup=jobs.filter(j=>j.transport==='Supplier').reduce((a,j)=>a+j.freight,0);
+  document.getElementById('ft-total').textContent=fmt(total)+' ฿';
+  document.getElementById('ft-company').textContent=fmt(byCompany)+' ฿';
+  document.getElementById('ft-sup').textContent=fmt(bySup)+' ฿';
+  document.getElementById('ft-count').textContent=withFreight.length+' JOB';
+  document.getElementById('freight-rows').innerHTML=jobs.map(j=>`
+    <div class="freight-row">
+      <span class="freight-job">${j.no}</span>
+      <span class="freight-customer">${j.customer}</span>
+      <span class="freight-by">${j.transport}</span>
+      <span style="color:var(--text3);font-size:11px;flex:1">${j.deliverto||'—'}</span>
+      <span class="freight-amt">${j.freight>0?fmt(j.freight)+' ฿':'—'}</span>
+    </div>`).join('');
+}
+
+// ── SUPPLIER TABLE ──
+let supFilter='all';
+function filterSup(f,btn){
+  supFilter=f;
+  document.querySelectorAll('#section-supplier .filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderSupplier();
+}
+function renderSupplier(){
+  const data=supFilter==='all'?jobs:jobs.filter(j=>j.supPayStatus===supFilter);
+  const totalCost=data.reduce((a,j)=>a+j.cost,0);
+  const unpaid=data.filter(j=>j.supPayStatus!=='จ่ายแล้ว').reduce((a,j)=>a+j.cost,0);
+  const paid=data.filter(j=>j.supPayStatus==='จ่ายแล้ว').reduce((a,j)=>a+j.cost,0);
+  document.getElementById('sup-total-cost').textContent=fmt(totalCost)+' ฿';
+  document.getElementById('sup-unpaid').textContent=fmt(unpaid)+' ฿';
+  document.getElementById('sup-paid').textContent=fmt(paid)+' ฿';
+  const cs=j=>custStatus(j), cl=j=>custStatusLabel(j);
+  document.getElementById('sup-tbody').innerHTML=data.map(j=>`
+    <tr onclick="openModal('${j.no}')" style="cursor:pointer">
+      <td><span class="job-no">${j.no}</span></td>
+      <td style="color:var(--text)">${j.customer}</td>
+      <td style="color:var(--text2);font-size:11px">${j.supplier||'—'}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${j.po||'—'}</td>
+      <td><span class="money">${j.cost>0?fmt(j.cost):'—'}</span></td>
+      <td><span class="money">${fmt(j.saleAmt)}</span></td>
+      <td><span class="${profit(j)>=0?'profit-pos':'profit-neg'}">${profit(j)>=0?'+':''}${fmt(profit(j))}</span></td>
+      <td style="font-size:12px;color:${!j.supDue?'var(--text3)':j.supPayStatus!=='จ่ายแล้ว'?'var(--amber)':'var(--text2)'}">${fmtD(j.supDue)}</td>
+      <td><span class="badge ${j.supPayStatus}">${j.supPayStatus}</span></td>
+      <td><span class="badge ${cs(j)}">${cl(j)}</span></td>
+    </tr>`).join('');
+}
+
+// ── JOB TABLE ──
+function renderTableHead(){
+  const isA=currentRole==='admin';
+  document.getElementById('table-head').innerHTML=`<tr>
+    <th>JOB No.</th><th>ลูกค้า</th><th>สินค้า</th><th>พนักงาน</th>
+    <th>ราคาขาย (฿)</th>${isA?'<th>กำไร (฿)</th>':''}
+    <th>กำหนดส่ง</th><th>สถานะส่ง</th>
+    <th>กำหนดชำระ</th><th>ชำระ (ลค.)</th>
+    <th>สถานะ (ลค.)</th>
+    ${isA?'<th>ค่าขนส่ง</th><th>Supplier</th>':''}
+  </tr>`;
+}
+function getFiltered(){
+  let data = getBaseFiltered();
+  if(currentFilter==='เกินกำหนด') return data.filter(j=>j.payDue==='เกินกำหนด');
+  if(currentFilter!=='all') return data.filter(j=>j.deliverStatus===currentFilter);
+  return data;
+}
+function renderTable(data){
+  const isA=currentRole==='admin';
+  document.getElementById('job-tbody').innerHTML=data.map(j=>`
+    <tr onclick="openModal('${j.no}')">
+      <td><span class="job-no">${j.no}</span></td>
+      <td style="font-weight:500;font-size:13px">${j.customer}</td>
+      <td><span class="product-tag">${j.product}</span></td>
+      <td style="color:var(--text2);font-size:12px">${j.sales}</td>
+      <td><span class="money">${fmt(j.saleAmt)}</span></td>
+      ${isA?`<td><span class="${profit(j)>=0?'profit-pos':'profit-neg'}">${profit(j)>=0?'+':''}${fmt(profit(j))}</span></td>`:''}
+      <td style="font-size:12px;color:var(--text2)">${fmtD(j.deliverBy)}</td>
+      <td><span class="badge ${j.deliverStatus}">${j.deliverStatus}</span></td>
+      <td style="font-size:12px;color:${j.payDue==='เกินกำหนด'?'var(--red)':j.payDue==='ใกล้ครบกำหนด'?'var(--amber)':'var(--text2)'}">${fmtD(j.due)||j.payDue}</td>
+      <td><span class="badge ${j.payStatus}">${j.payStatus}</span></td>
+      <td><span class="badge ${custStatus(j)}">${custStatusLabel(j)}</span></td>
+      ${isA?`<td><span class="freight-cell">${j.freight>0?fmt(j.freight)+' ฿':'—'}</span></td><td><span class="badge ${j.supPayStatus}">${j.supPayStatus}</span></td>`:''}
+    </tr>`).join('');
+}
+// ── CHARTS (dynamic) ──
+function renderCharts(data){
+  data = data || getBaseFiltered();
+  const salesPeople = ['พี่เบียร์','พี่เจน','พี่พลอย','พี่หนึ่ง','เบลล์'];
+  const colors = ['var(--accent)','var(--purple)','var(--green)','var(--amber)','var(--teal)'];
+  const maxSale = Math.max(...salesPeople.map(s=>data.filter(j=>j.sales===s).reduce((a,j)=>a+j.saleAmt,0)),1);
+  const salesRows = salesPeople.map((s,i)=>{
+    const total = data.filter(j=>j.sales===s).reduce((a,j)=>a+j.saleAmt,0);
+    if(!total) return '';
+    return `<div class="bar-row"><div class="bar-label">${s}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(total/maxSale*100)}%;background:${colors[i]}"></div></div><div class="bar-val">${fmt(total)}</div></div>`;
+  }).join('');
+  const companies = ['ENERJPLUS','NEORAJ'];
+  const compColors = ['var(--amber)','var(--green)'];
+  const maxComp = Math.max(...companies.map(c=>data.filter(j=>j.company===c).reduce((a,j)=>a+j.saleAmt,0)),1);
+  const compRows = companies.map((c,i)=>{
+    const total = data.filter(j=>j.company===c).reduce((a,j)=>a+j.saleAmt,0);
+    return `<div class="bar-row"><div class="bar-label">${c}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(total/maxComp*100)}%;background:${compColors[i]}"></div></div><div class="bar-val">${fmt(total)}</div></div>`;
+  }).join('');
+  const paid=data.filter(j=>j.payStatus==='จ่ายแล้ว').length;
+  const wait=data.filter(j=>j.payStatus==='รอจ่าย').length;
+  const over=data.filter(j=>j.payStatus==='ค้างจ่าย').length;
+  const maxP=Math.max(paid,wait,over,1);
+  const payRows=[['จ่ายแล้ว',paid,'var(--green)'],['รอจ่าย',wait,'var(--accent)'],['ค้างจ่าย',over,'var(--red)']].map(([l,n,c])=>
+    `<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxP*100)}%;background:${c}"></div></div><div class="bar-val">${n} JOB</div></div>`).join('');
+  const cc=document.querySelectorAll('#section-charts .chart-card');
+  if(cc[0]) cc[0].innerHTML=`<div class="chart-title">ยอดขาย แยกพนักงาน</div>${salesRows||'<div style="color:var(--text3);font-size:12px;padding:8px 0">ไม่มีข้อมูล</div>'}`;
+  if(cc[1]) cc[1].innerHTML=`<div class="chart-title">ยอดขาย แยกบริษัท</div>${compRows}`;
+  if(cc[2]) cc[2].innerHTML=`<div class="chart-title">สถานะการจ่าย</div>${payRows}`;
+}
+
+function filterTable(s,btn){
+  currentFilter=s;
+  document.querySelectorAll('#section-jobs .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable(getFiltered());
+}
+
+// ── EXPORT ──
+function exportReport(){
+  const rows=[['JOB No.','ลูกค้า','สินค้า','บริษัท','พนักงาน','ราคาขาย','ราคาซื้อ','กำไร','ค่าขนส่ง','กำหนดส่ง','สถานะส่ง','กำหนดชำระ(ลค.)','ชำระลูกค้า','Supplier','PO','กำหนดจ่าย Supplier','ชำระ Supplier']];
+  jobs.forEach(j=>rows.push([j.no,j.customer,j.product,j.company,j.sales,j.saleAmt,j.cost,profit(j),j.freight,fmtD(j.deliverBy),j.deliverStatus,fmtD(j.due),j.payStatus,j.supplier||'—',j.po||'—',fmtD(j.supDue),j.supPayStatus]));
+  downloadCSV(rows,'job-report-2026.csv');
+}
+function exportFreight(){
+  const rows=[['JOB No.','ลูกค้า','ขนส่งโดย','สถานที่ส่ง','ค่าขนส่ง (฿)']];
+  jobs.forEach(j=>rows.push([j.no,j.customer,j.transport,j.deliverto||'—',j.freight]));
+  downloadCSV(rows,'freight-report-2026.csv');
+}
+function downloadCSV(rows,filename){
+  const bom='\uFEFF';
+  const csv=bom+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+  showToast('Export สำเร็จ ✓');
+}
+
+// ── PAGES ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const tabs=document.querySelectorAll('.nav-tab');
+  if(id==='dashboard')tabs[0].classList.add('active');
+  if(id==='openjob'){
+    tabs[1].classList.add('active');updateJobNo();
+    const isA=currentRole==='admin';
+    const s=document.getElementById('form-section-supplier');
+    if(s)s.style.display=isA?'block':'none';
+    const t=document.getElementById('openjob-title');
+    if(t)t.textContent=isA?'OPEN JOB':'OPEN JOB — ข้อมูลฝั่งลูกค้า';
+  }
+}
+function updateJobNo(){
+  const now=new Date();
+  document.getElementById('preview-job-no').textContent=`J${String(now.getFullYear()).slice(2)}${String(now.getMonth()+1).padStart(2,'0')}${String(jobCounter).padStart(2,'0')}`;
+}
+
+// ── PROFIT CALC ──
+function calcProfit(){
+  const s=parseFloat(document.getElementById('f-sale').value)||0;
+  const c=parseFloat(document.getElementById('f-cost').value)||0;
+  const p=s-c,pp=document.getElementById('profit-preview');
+  if(s>0||c>0){pp.style.display='block';const pv=document.getElementById('profit-val');pv.textContent=(p>=0?'+':'')+fmt(p)+' ฿';pv.style.color=p>=0?'var(--green)':'var(--red)';document.getElementById('margin-val').textContent=s>0?'margin '+((p/s)*100).toFixed(1)+'%':'';}else pp.style.display='none';
+}
+
+function resetForm(){document.querySelectorAll('#page-openjob input,#page-openjob textarea').forEach(el=>el.value='');document.getElementById('profit-preview').style.display='none';}
+
+// ── MODAL ──
+function openModal(jobNo){
+  const j=jobs.find(x=>x.no===jobNo);if(!j)return;
+  activeJobNo=jobNo;_ds=null;_ps=null;_ss=null;
+  const isA=currentRole==='admin';
+  document.getElementById('modal-job-no').textContent=j.no;
+  document.getElementById('modal-customer').textContent=j.customer;
+  const tag=document.getElementById('modal-role-tag');
+  tag.textContent=isA?'ADMIN · แก้ไขได้':'SALES · ดูอย่างเดียว';
+  tag.className='modal-role-tag '+(isA?'admin':'sales');
+  document.getElementById('btn-save').style.display=isA?'flex':'none';
+  document.getElementById('btn-delete').style.display=isA?'flex':'none';
+  const p=profit(j);
+
+  if(isA){
+    document.getElementById('modal-body').innerHTML=`
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="section-dot dot-blue"></span>ข้อมูลหลัก</div>
+        <div class="edit-grid">
+          <div class="edit-group"><div class="edit-label">ชื่อลูกค้า</div><input class="edit-input" id="e-customer" value="${j.customer}"></div>
+          <div class="edit-group"><div class="edit-label">กลุ่มลูกค้า</div><select class="edit-select" id="e-group">${['เอกชน','รัฐบาล','SOE'].map(o=>`<option${j.group===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group"><div class="edit-label">สินค้า</div><select class="edit-select" id="e-product">${['อุปกรณ์ไฟฟ้าแรงต่ำ','อุปกรณ์ไฟฟ้าแรงสูง','Cable Tray','Perforated Tray','Pull Box','Maintenance','อื่นๆ'].map(o=>`<option${j.product===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group"><div class="edit-label">บริษัทที่ขาย</div><select class="edit-select" id="e-company">${['ENERJPLUS','NEORAJ'].map(o=>`<option${j.company===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group"><div class="edit-label">พนักงานขาย</div><select class="edit-select" id="e-sales">${['พี่เบียร์','พี่เจน','พี่พลอย','พี่หนึ่ง','เบลล์'].map(o=>`<option${j.sales===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group"><div class="edit-label">เงื่อนไขชำระ</div><select class="edit-select" id="e-payment">${['เครดิต 30 วัน','เครดิต 60 วัน','เงินสด'].map(o=>`<option${j.payment===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group full"><div class="edit-label">หมายเหตุ</div><input class="edit-input" id="e-note" value="${j.note||''}"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="section-dot dot-green"></span>เอกสารขาย (SALES)</div>
+        <div class="edit-grid cols3">
+          <div class="edit-group"><div class="edit-label">QT No.</div><input class="edit-input" id="e-qt" value="${j.qt}"></div>
+          <div class="edit-group"><div class="edit-label">Invoice</div><input class="edit-input" id="e-inv" value="${j.inv}"></div>
+          <div class="edit-group"><div class="edit-label">โครงการ</div><input class="edit-input" id="e-project" value="${j.project}"></div>
+          <div class="edit-group"><div class="edit-label">มูลค่าขาย (฿)</div><input class="edit-input" type="number" id="e-saleAmt" value="${j.saleAmt}" oninput="calcModalProfit()"></div>
+          <div class="edit-group"><div class="edit-label">กำหนดชำระ</div><input class="edit-input" type="date" id="e-due" value="${j.due||''}"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="section-dot dot-amber"></span>ต้นทุน / Supplier</div>
+        <div class="edit-grid cols3">
+          <div class="edit-group"><div class="edit-label">Supplier</div><select class="edit-select" id="e-supplier"><option value=""${!j.supplier?' selected':''}>— เลือก —</option>${['บ.อินโดไชนา เอ็นจิเนียริ่ง ฯ','บ.ซีจี อิเล็คทริคซีสเทม จก.','บ.เอไอซี แอดวานซ์ จก.','บ.พิชญอาภา เสมา จก.','อื่นๆ'].map(o=>`<option${j.supplier===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group"><div class="edit-label">PO Supplier</div><input class="edit-input" id="e-po" value="${j.po||''}"></div>
+          <div class="edit-group"><div class="edit-label">มูลค่าซื้อ (฿)</div><input class="edit-input" type="number" id="e-cost" value="${j.cost||0}" oninput="calcModalProfit()"></div>
+          <div class="edit-group"><div class="edit-label">กำหนดจ่าย Supplier</div><input class="edit-input" type="date" id="e-supDue" value="${j.supDue||''}"></div>
+        </div>
+        <div style="margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:8px;font-size:13px">
+          กำไร: <span id="mp-val" style="font-family:var(--mono);font-weight:600;color:${p>=0?'var(--green)':'var(--red)'}">${p>=0?'+':''}${fmt(p)} ฿</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:8px">${j.saleAmt>0?'margin '+((p/j.saleAmt)*100).toFixed(1)+'%':''}</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="section-dot dot-purple"></span>การจัดส่ง (LOGISTIC)</div>
+        <div class="edit-grid cols3">
+          <div class="edit-group"><div class="edit-label">กำหนดส่ง</div><input class="edit-input" type="date" id="e-deliverBy" value="${j.deliverBy||''}"></div>
+          <div class="edit-group"><div class="edit-label">วันส่งจริง</div><input class="edit-input" type="date" id="e-deliverDate" value="${j.deliverDate||''}" onchange="autoDeliverDone()"></div>
+          <div class="edit-group"><div class="edit-label">ขนส่งโดย</div><select class="edit-select" id="e-transport">${['รถบริษัท','Supplier','ขนส่งเอกชน','—'].map(o=>`<option${j.transport===o?' selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="edit-group"><div class="edit-label">ค่าขนส่ง (฿)</div><input class="edit-input" type="number" id="e-freight" value="${j.freight||0}"></div>
+          <div class="edit-group"><div class="edit-label">สถานที่รับ</div><input class="edit-input" id="e-pickfrom" value="${j.pickfrom||''}"></div>
+          <div class="edit-group"><div class="edit-label">สถานที่ส่ง</div><input class="edit-input" id="e-deliverto" value="${j.deliverto||''}"></div>
+          <div class="edit-group"><div class="edit-label">ผู้รับของ</div><input class="edit-input" id="e-receiver" value="${j.receiver||''}"></div>
+          <div class="edit-group"><div class="edit-label">เบอร์โทร</div><input class="edit-input" id="e-phone" value="${j.phone||''}"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-section">
+        <div class="edit-section-title">🔄 สถานะ</div>
+        <div class="status-row">
+          <div class="status-label-sm">🚚 สถานะส่ง</div>
+          <div class="status-btn-group" id="deliver-btns">
+            ${['รอส่งสินค้า','เสร็จสิ้น'].map(s=>`<button class="status-btn ${dCls(s,j.deliverStatus)}" id="dbtn-${eid(s)}" onclick="selD('${s}')">${s}</button>`).join('')}
+          </div>
+        </div>
+        <div class="status-row">
+          <div class="status-label-sm">💰 ลูกค้าชำระ</div>
+          <div class="status-btn-group" id="pay-btns">
+            ${['รอจ่าย','ค้างจ่าย','จ่ายแล้ว'].map(s=>`<button class="status-btn ${pCls(s,j.payStatus)}" id="pbtn-${eid(s)}" onclick="selP('${s}')">${s}</button>`).join('')}
+          </div>
+        </div>
+        <div class="status-row">
+          <div class="status-label-sm">🏭 Supplier ชำระ</div>
+          <div class="status-btn-group" id="sup-btns">
+            ${['รอจ่าย','ค้างจ่าย','จ่ายแล้ว'].map(s=>`<button class="status-btn ${pCls(s,j.supPayStatus)}" id="sbtn-${eid(s)}" onclick="selS('${s}')">${s}</button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('modal-body').innerHTML=`
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="section-dot dot-blue"></span>ข้อมูลงาน</div>
+        <div class="detail-grid">
+          <div class="detail-item"><div class="detail-key">สินค้า</div><div class="detail-val">${j.product}</div></div>
+          <div class="detail-item"><div class="detail-key">บริษัท</div><div class="detail-val">${j.company}</div></div>
+          <div class="detail-item"><div class="detail-key">พนักงานขาย</div><div class="detail-val">${j.sales}</div></div>
+          <div class="detail-item"><div class="detail-key">โครงการ</div><div class="detail-val">${j.project||'—'}</div></div>
+          <div class="detail-item"><div class="detail-key">QT No.</div><div class="detail-val" style="font-family:var(--mono);font-size:12px">${j.qt||'—'}</div></div>
+          <div class="detail-item"><div class="detail-key">ราคาขาย (฿)</div><div class="detail-val" style="color:var(--green);font-family:var(--mono)">${fmt(j.saleAmt)}</div></div>
+          <div class="detail-item"><div class="detail-key">เงื่อนไขชำระ</div><div class="detail-val">${j.payment||'—'}</div></div>
+          <div class="detail-item"><div class="detail-key">กำหนดชำระ</div><div class="detail-val" style="color:${j.payDue==='เกินกำหนด'?'var(--red)':'var(--text)'}">${fmtD(j.due)||j.payDue}</div></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="section-dot dot-purple"></span>การจัดส่ง</div>
+        <div class="detail-grid">
+          <div class="detail-item"><div class="detail-key">กำหนดส่ง</div><div class="detail-val">${fmtD(j.deliverBy)}</div></div>
+          <div class="detail-item"><div class="detail-key">วันส่งจริง</div><div class="detail-val">${fmtD(j.deliverDate)||'ยังไม่ระบุ'}</div></div>
+          <div class="detail-item"><div class="detail-key">สถานะส่ง</div><div class="detail-val"><span class="badge ${j.deliverStatus}">${j.deliverStatus}</span></div></div>
+          <div class="detail-item"><div class="detail-key">ส่งถึง</div><div class="detail-val">${j.deliverto||'—'}</div></div>
+          <div class="detail-item"><div class="detail-key">ผู้รับของ</div><div class="detail-val">${j.receiver||'—'}</div></div>
+          <div class="detail-item"><div class="detail-key">เบอร์โทร</div><div class="detail-val">${j.phone||'—'}</div></div>
+          <div class="detail-item"><div class="detail-key">สถานะ (ลค.)</div><div class="detail-val"><span class="badge ${custStatus(j)}">${custStatusLabel(j)}</span></div></div>
+          <div class="detail-item"><div class="detail-key">ชำระเงิน (ลค.)</div><div class="detail-val"><span class="badge ${j.payStatus}">${j.payStatus}</span></div></div>
+        </div>
+      </div>`;
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function eid(s){return s.replace(/\s/g,'_')}
+function dCls(s,c){if(s!==c)return '';return s==='เสร็จสิ้น'?'sel-green':'sel-amber'}
+function pCls(s,c){if(s!==c)return '';return s==='จ่ายแล้ว'?'sel-green':s==='ค้างจ่าย'?'sel-red':'sel-blue'}
+function selD(s){_ds=s;document.querySelectorAll('#deliver-btns .status-btn').forEach(b=>b.className='status-btn');const el=document.getElementById('dbtn-'+eid(s));if(el)el.className='status-btn '+dCls(s,s)}
+function selP(s){_ps=s;document.querySelectorAll('#pay-btns .status-btn').forEach(b=>b.className='status-btn');const el=document.getElementById('pbtn-'+eid(s));if(el)el.className='status-btn '+pCls(s,s)}
+function selS(s){_ss=s;document.querySelectorAll('#sup-btns .status-btn').forEach(b=>b.className='status-btn');const el=document.getElementById('sbtn-'+eid(s));if(el)el.className='status-btn '+pCls(s,s)}
+function autoDeliverDone(){if(document.getElementById('e-deliverDate').value)selD('เสร็จสิ้น')}
+function calcModalProfit(){
+  const s=parseFloat(document.getElementById('e-saleAmt')?.value)||0;
+  const c=parseFloat(document.getElementById('e-cost')?.value)||0;
+  const p=s-c,pv=document.getElementById('mp-val');
+  if(pv){pv.textContent=(p>=0?'+':'')+fmt(p)+' ฿';pv.style.color=p>=0?'var(--green)':'var(--red)';}
+}
+
+function closeModal(e){if(e.target.id==='modal')closeModalDirect()}
+async function deleteJobConfirm() {
+  if (!activeJobNo) return;
+  const ok = confirm(`ต้องการลบ ${activeJobNo} ออกจากระบบและ Sheets ทั้งหมดหรือไม่?\n\n⚠️ การลบไม่สามารถกู้คืนได้`);
+  if (!ok) return;
+
+  const no = activeJobNo;
+  // ลบใน local
+  const i = jobs.findIndex(x => x.no === no);
+  if (i >= 0) jobs.splice(i, 1);
+  applyFilters();
+  closeModalDirect();
+  showToast(`ลบ ${no} ✓ กำลังซิงค์...`);
+
+  // ลบใน Sheets
+  try {
+    setLoading(true);
+    await apiCall('deleteJob', {job: {no}});
+    showToast(`ลบ ${no} → Sheets สำเร็จ ✓`);
+  } catch(e) {
+    showToast('⚠ ลบ local แล้ว แต่ซิงค์ Sheets ไม่สำเร็จ');
+  }
+  setLoading(false);
+}
+
+function closeModalDirect(){document.getElementById('modal').classList.remove('open');_ds=null;_ps=null;_ss=null}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── API CONFIG ──
+const API_URL = 'https://script.google.com/macros/s/AKfycbzGB2AlZ0MvZC4VeH_A1_UQh0OWObMffM_YL1EQ9l27wl13o6WvLu8IgvhTx6z2x3y3/exec';
+
+// Apps Script รองรับ GET + params เท่านั้นสำหรับ cross-origin
+// ใช้ JSONP-style ผ่าน URL params แทน POST
+async function apiCall(action, body={}) {
+  // สร้าง query string จาก body
+  let url = API_URL + '?action=' + encodeURIComponent(action);
+  if (body.job) {
+    url += '&data=' + encodeURIComponent(JSON.stringify(body.job));
+  }
+  const res = await fetch(url, {
+    method: 'GET',
+    redirect: 'follow',
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(e) { return { ok: false, error: 'Parse error: ' + text.slice(0,100) }; }
+}
+
+// ── LOADING STATE ──
+function setLoading(on) {
+  const el = document.getElementById('loading-bar');
+  if (el) el.style.width = on ? '100%' : '0';
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) overlay.style.display = on ? 'flex' : 'none';
+}
+
+// ── LOAD JOBS FROM SHEETS ──
+async function loadJobs() {
+  setLoading(true);
+  try {
+    const data = await apiCall('getJobs');
+    if (data.ok && data.jobs.length > 0) {
+      jobs.length = 0;
+      data.jobs.forEach(j => jobs.push(j));
+      showToast(`โหลดข้อมูล ${jobs.length} JOB สำเร็จ ✓`);
+    } else if (!data.ok) {
+      showToast('⚠ โหลดข้อมูลไม่สำเร็จ: ' + (data.error||''));
+    }
+  } catch(e) {
+    showToast('⚠ เชื่อมต่อ Sheets ไม่ได้ ใช้ข้อมูลตัวอย่าง');
+  }
+  setLoading(false);
+  renderTableHead();
+  applyFilters();
+}
+
+// ── SUBMIT (with API) ──
+async function submitJob() {
+  const customer = document.getElementById('f-customer').value.trim();
+  const product  = document.getElementById('f-product').value;
+  const saleAmt  = parseFloat(document.getElementById('f-sale').value)||0;
+  if(!customer){alert('กรุณากรอกชื่อลูกค้า');return;}
+  if(!product)  {alert('กรุณาเลือกสินค้า');return;}
+  if(!saleAmt)  {alert('กรุณากรอกมูลค่าขาย');return;}
+
+  setLoading(true);
+  // ดึงเลข JOB ถัดไปจาก Sheets
+  let jobNo;
+  try {
+    const r = await apiCall('nextJobNo');
+    jobNo = r.ok ? r.jobNo : localJobNo();
+  } catch(e) { jobNo = localJobNo(); }
+
+  const cost = parseFloat(document.getElementById('f-cost').value)||0;
+  const g = id => document.getElementById(id)?.value || '';
+  const newJob = {
+    no:jobNo, customer, group:g('f-group'), product,
+    company:g('f-company'), sales:g('f-sales'), payment:g('f-payment'), note:g('f-note'),
+    qt:g('f-qt'), inv:g('f-inv'), project:g('f-project'),
+    saleAmt, due:g('f-due'), cost,
+    supplier:g('f-sup'), po:g('f-po'), supDue:g('f-supdue'),
+    deliverBy:g('f-deliverby'), transport:g('f-transport'),
+    freight:parseFloat(g('f-freight'))||0,
+    pickfrom:g('f-pickfrom'), deliverto:g('f-deliverto'),
+    receiver:g('f-receiver'), phone:g('f-phone'),
+    deliverDate:'', deliverStatus:'รอส่งสินค้า',
+    payStatus:'รอจ่าย', payDue:'—', supPayStatus:'รอจ่าย',
+  };
+
+  // บันทึกใน local ทันที (optimistic)
+  jobs.unshift(newJob);
+  applyFilters();
+  showToast(`บันทึก ${jobNo} ✓ กำลังซิงค์ Sheets...`);
+  resetForm();
+  showPage('dashboard');
+
+  // ซิงค์ไป Sheets
+  try {
+    await apiCall('saveJob', {job: newJob});
+    showToast(`ซิงค์ ${jobNo} → Sheets สำเร็จ ✓`);
+  } catch(e) {
+    showToast('⚠ บันทึก local แล้ว แต่ซิงค์ Sheets ไม่สำเร็จ');
+  }
+  setLoading(false);
+}
+
+function localJobNo() {
+  const now = new Date();
+  return `J${String(now.getFullYear()).slice(2)}${String(now.getMonth()+1).padStart(2,'0')}${String(jobCounter).padStart(2,'0')}`;
+}
+
+// ── SAVE ALL (with API) ──
+async function saveAll() {
+  const j = jobs.find(x=>x.no===activeJobNo); if(!j)return;
+  const g = id => document.getElementById(id);
+  j.customer  = g('e-customer')?.value  || j.customer;
+  j.group     = g('e-group')?.value     || j.group;
+  j.product   = g('e-product')?.value   || j.product;
+  j.company   = g('e-company')?.value   || j.company;
+  j.sales     = g('e-sales')?.value     || j.sales;
+  j.payment   = g('e-payment')?.value   || j.payment;
+  j.note      = g('e-note')?.value      || '';
+  j.qt        = g('e-qt')?.value        || j.qt;
+  j.inv       = g('e-inv')?.value       || j.inv;
+  j.project   = g('e-project')?.value   || j.project;
+  j.saleAmt   = parseFloat(g('e-saleAmt')?.value) || j.saleAmt;
+  j.due       = g('e-due')?.value       || j.due;
+  j.cost      = parseFloat(g('e-cost')?.value)     || 0;
+  j.supplier  = g('e-supplier')?.value  || j.supplier;
+  j.po        = g('e-po')?.value        || j.po;
+  j.supDue    = g('e-supDue')?.value    || j.supDue;
+  j.deliverBy   = g('e-deliverBy')?.value   || j.deliverBy;
+  j.deliverDate = g('e-deliverDate')?.value || j.deliverDate;
+  j.transport   = g('e-transport')?.value   || j.transport;
+  j.freight     = parseFloat(g('e-freight')?.value)||0;
+  j.pickfrom    = g('e-pickfrom')?.value    || j.pickfrom;
+  j.deliverto   = g('e-deliverto')?.value   || j.deliverto;
+  j.receiver    = g('e-receiver')?.value    || j.receiver;
+  j.phone       = g('e-phone')?.value       || j.phone;
+  if(_ds) j.deliverStatus = _ds;
+  if(_ps) j.payStatus     = _ps;
+  if(_ss) j.supPayStatus  = _ss;
+  _ds=null;_ps=null;_ss=null;
+
+  applyFilters();
+  closeModalDirect();
+  showToast(`บันทึก ${activeJobNo} ✓ กำลังซิงค์...`);
+
+  try {
+    setLoading(true);
+    await apiCall('updateJob', {job: j});
+    showToast(`ซิงค์ ${activeJobNo} → Sheets สำเร็จ ✓`);
+  } catch(e) {
+    showToast('⚠ บันทึก local แล้ว แต่ซิงค์ Sheets ไม่สำเร็จ');
+  }
+  setLoading(false);
+}
+
+// ── INIT ──
+renderTableHead();
+applyFilters(); // แสดงข้อมูลตัวอย่างก่อน
+loadJobs();     // แล้วโหลดจาก Sheets ทับ
+</script>
+</body>
+</html>
